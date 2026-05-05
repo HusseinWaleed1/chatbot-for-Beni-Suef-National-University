@@ -1,0 +1,394 @@
+{
+  "name": "ragchatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "14CldVCjhvN3AHnu_vk5p-cil6aJoRjpl",
+          "mode": "list",
+          "cachedResultName": "BSNU",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/14CldVCjhvN3AHnu_vk5p-cil6aJoRjpl"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        -144
+      ],
+      "id": "427f3d9a-89a2-40ba-9556-caffa500cfa7",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "TVhbIXIeJKGxNHLB",
+          "name": "Google Drive account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1312,
+        -160
+      ],
+      "id": "f884e78a-9c17-4f74-b4cc-088f0809764c",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "TVhbIXIeJKGxNHLB",
+          "name": "Google Drive account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "bsnuchat",
+          "mode": "list",
+          "cachedResultName": "bsnuchat"
+        },
+        "options": {
+          "pineconeNamespace": "BSNUChatBot"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -1152,
+        -160
+      ],
+      "id": "7a9e80ae-0b15-4257-92e7-5af27e0b2a8c",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "PKQk2wTEt68BNGHW",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1248,
+        64
+      ],
+      "id": "e894b522-3477-4193-9a55-91a6e9d78359",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "I1mEqjptHOZBD8my",
+          "name": "OpenAI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "metadata": {
+            "metadataValues": []
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -1024,
+        96
+      ],
+      "id": "0a871aed-4782-4681-8974-85ecfc3e05c0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "content": "##  Knowledge Base",
+        "height": 464,
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1504,
+        -240
+      ],
+      "id": "c2d89c03-c239-4d79-b1bf-7829b30fde7d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## RAG ChatBot",
+        "height": 608,
+        "width": 912
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        -240
+      ],
+      "id": "25e51303-ab85-4b95-9f48-4bd67e6842ab",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an AI assistant specialized in helping students find information about university faculties. Your main goal is to answer questions accurately and precisely using the vector database, which contains student guides for all faculties.\n\nProvide only information that comes directly from these guides. If the requested information is missing or unclear, explicitly state that there is insufficient data.\n\nKeep responses concise and to the point. Include specific details whenever possible, and clearly indicate which faculty the information is sourced from.\n\nAnswer in the same language the student uses. If they write in Arabic, respond in Arabic. If they write in English, respond in English.\n\nDeliver quick, reliable insights about faculty requirements, subjects, and student guides without adding unnecessary details."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -480,
+        -176
+      ],
+      "id": "5b3bd9c4-dc85-46cd-a777-b7935e562d16",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -656,
+        -160
+      ],
+      "id": "4c393966-f063-4803-9d95-b4adb0d947b7",
+      "name": "When chat message received",
+      "webhookId": "dc0c3ff6-9184-4097-bc2f-1d3f064f8527"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        48
+      ],
+      "id": "68da0a5a-3f36-465f-9edd-7351b1e97874",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "I1mEqjptHOZBD8my",
+          "name": "OpenAI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        144
+      ],
+      "id": "826fd67d-0ef3-4f83-aeac-b800e85a9ed3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Returns documents related to university faculties, including details about Business, Computers & AI, Dentistry, Engineering, Medicine, Nursing, Pharmacy, and Physical Therapy faculties. Use this to answer any question about faculty requirements, subjects, or student guides.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "bsnuchat",
+          "mode": "list",
+          "cachedResultName": "bsnuchat"
+        },
+        "topK": 10,
+        "options": {
+          "pineconeNamespace": "BSNUChatBot"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "b3d5933c-2439-4467-889f-dc710932323c",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "PKQk2wTEt68BNGHW",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        176
+      ],
+      "id": "081dc6bf-8fd2-492b-b7c0-de8ed6c52b3a",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "I1mEqjptHOZBD8my",
+          "name": "OpenAI account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "939b3efe-20ed-43b0-88c3-661f9f85ccf9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ca0e501b311ec7d95cc08c25e6a0a38b0aafe1b0d9f8d0505b7a300ec6969d2f"
+  },
+  "id": "r75YoiaPV9W9WVcu",
+  "tags": []
+}
